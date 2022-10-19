@@ -13,7 +13,7 @@ public class MemberTests {
     Member member = new Member("Jepz", "1234567891", LocalDate.now().minusYears(1));
 
     //act
-    boolean result = member.hasPaidYearlyMembershipFee();
+    boolean result = member.isActive();
 
     //assert
     assertFalse(result);
@@ -25,7 +25,7 @@ public class MemberTests {
     Member member = new Member("Jepz", "1234567891", LocalDate.now().minusMonths(1));
 
     //act
-    boolean result = member.hasPaidYearlyMembershipFee();
+    boolean result = member.isActive();
 
     //assert
     assertTrue(result);
@@ -42,7 +42,7 @@ public class MemberTests {
             .plusDays(1));
 
     //act
-    boolean result = member.hasPaidYearlyMembershipFee();
+    boolean result = member.isActive();
 
     //assert
     assertTrue(result);

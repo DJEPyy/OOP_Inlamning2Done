@@ -3,9 +3,9 @@ package main;
 import java.time.LocalDate;
 
 public class Member {
-  String name;
-  String personalIdentityNumber;
-  LocalDate lastPaymentDate;
+  private String name;
+  private String personalIdentityNumber;
+  private LocalDate lastPaymentDate;
 
   public Member(String name, String personalIdentityNumber, LocalDate lastPaymentDate) {
     this.name = name;
@@ -17,7 +17,7 @@ public class Member {
     return name;
   }
 
-  public boolean hasPaidYearlyMembershipFee() {
+  public boolean isActive() {
     var dateOneYearAgo = LocalDate.now().minusYears(1);
     return lastPaymentDate.isAfter(dateOneYearAgo);
   }
@@ -26,7 +26,15 @@ public class Member {
     return personalIdentityNumber;
   }
 
+  public String getInfo(){
+    String isMemberActive = isActive() ? "ja" : "nej";
+    return "Namn: " + name + "\n"
+        + "Personnr: " + personalIdentityNumber + "\n"
+        + "Aktivt medlemskap: " + isMemberActive;
+  }
+
   public LocalDate getLastPaymentDate() {
     return lastPaymentDate;
   }
 }
+

@@ -1,27 +1,41 @@
 import main.Member;
 import main.MemberNotFoundException;
-import main.MemberRepository;
+import main.Gym;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
 
-public class MemberRepositoryTests {
-  @Test
-  public void constructor_whenMembersFileNotFound_shouldThrowFileNotFoundException() throws FileNotFoundException {
-    //arrange,act & assert
-    assertThrows(FileNotFoundException.class, () -> new MemberRepository("notMembersFile.txt"));
+public class GymTests {
+  private String membersFile = "test/TestMembers.txt";
+  private String checkInFile = "test/CheckInFile.txt";
+
+  @BeforeEach
+  public void beforeEach(){
+    File file = new File(checkInFile);
+    if(file.exists()){
+      file.delete();
+    }
   }
 
   @Test
-  public void getAllMembers_whenMembersFileFound_shouldReturnListOfAllMembers() throws FileNotFoundException {
+  public void constructor_whenMembersFileNotFound_shouldThrowFileNotFoundException() throws FileNotFoundException {
+    //arrange,act & assert
+    assertThrows(FileNotFoundException.class, () -> new Gym("notMembersFile.txt",checkInFile));
+  }
+
+  @Test
+  public void getAllMembers_whenMembersFileFound_shouldReturnListOfAllMembers() throws IOException {
     //arrange
-    var memberRepository = new MemberRepository("test/TestMembers.txt");
+    var Gym = new Gym(membersFile,checkInFile);
 
     //act
-    var result = memberRepository.getAllMembers();
+    var result = Gym.getAllMembers();
 
     //assert
     assertEquals(result.size(), 2);
@@ -39,10 +53,10 @@ public class MemberRepositoryTests {
   @Test
   public void findMember_whenSearchingForNameAndMemberExists_shouldReturnMember() throws Exception {
     //arrange
-    var memberRepository = new MemberRepository("test/TestMembers.txt");
+    var gym = new Gym(membersFile,checkInFile);
 
     //act
-    Member result = memberRepository.findMember("jan-OLov EricsSon");
+    Member result = gym.findMember("jan-OLov EricsSon");
 
     //assert
     assertEquals(result.getName(), "Jan-Olov Ericsson");
@@ -53,23 +67,36 @@ public class MemberRepositoryTests {
   @Test
   public void findMember_whenSearchingWithNoMatch_shouldThrowMemberNotFoundException() throws Exception {
     //arrange
-    var memberRepository = new MemberRepository("test/TestMembers.txt");
+    var gym = new Gym(membersFile,checkInFile);
 
     //act & assert
-    assertThrows(MemberNotFoundException.class,()-> memberRepository.findMember("No Match"));
+    assertThrows(MemberNotFoundException.class,()-> gym.findMember("No Match"));
   }
 
   @Test
   public void findMember_whenSearchingForPersonalIdentityNumberAndMemberExists_shouldReturnMember() throws Exception {
     //arrange
-    var memberRepository = new MemberRepository("test/TestMembers.txt");
+    Gym gym = new Gym(membersFile,checkInFile);
 
     //act
-    Member result = memberRepository.findMember("8402178316");
+    Member result = gym.findMember("8402178316");
 
     //assert
     assertEquals(result.getName(), "Jan-Olov Ericsson");
     assertEquals(result.getPersonalIdentityNumber(), "8402178316");
     assertEquals(result.getLastPaymentDate().toString(), "2016-12-16");
+  }
+
+  @Test
+  public void constructor_whenNoCheckInFileExists_shouldCreateFile() throws Exception{
+    //arrange
+    File file = new File(checkInFile);
+    assertFalse(file.exists());
+
+    //act
+    new Gym(membersFile,checkInFile);
+
+    //assert
+    assertTrue(file.exists());
   }
 }
